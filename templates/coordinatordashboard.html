@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Co-ordinator</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <script type="text/javascript" src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <style type="text/css">
+      .table-container
+      {
+        margin-top: 5%;
+      }
+      body, html{
+           height: 100%;
+       	background-repeat: no-repeat;
+       	background:url(https://i.ytimg.com/vi/4kfXjatgeEU/maxresdefault.jpg);
+       	font-family: 'Oxygen', sans-serif;
+      	    background-size: cover;
+      }
+
+    </style>
+    <script type="text/javascript">
+    toastr.options = {
+      "closeButton": false,
+      "debug": false,
+      "newestOnTop": false,
+      "progressBar": false,
+      "positionClass": "toast-top-right",
+      "preventDuplicates": false,
+      "onclick": null,
+      "showDuration": "300",
+      "hideDuration": "1000",
+      "timeOut": "5000",
+      "extendedTimeOut": "1000",
+      "showEasing": "swing",
+      "hideEasing": "linear",
+      "showMethod": "fadeIn",
+      "hideMethod": "fadeOut"
+    }
+
+    var getUrlParameter = function getUrlParameter(sParam) {
+     var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+         sURLVariables = sPageURL.split('&'),
+         sParameterName,
+         i;
+
+     for (i = 0; i < sURLVariables.length; i++) {
+         sParameterName = sURLVariables[i].split('=');
+
+         if (sParameterName[0] === sParam) {
+             return sParameterName[1] === undefined ? true : sParameterName[1];
+         }
+     }
+  };
+
+      $( document ).ready(function() {
+        var userid=getUrlParameter('userid');
+        console.log(userid);
+        $.ajax({
+               url: '/costudylist',
+               data: {
+                  format:'json',
+                  userid:userid
+               },
+               error: function(errorCode) {
+                  $('body').html('<p>An error has occurred</p>');
+               },
+               dataType: 'json',
+               success: function(dataSet) {
+                  console.log(dataSet);
+                  var studies = [];
+                  for (var i = 0; i < dataSet.result.length; i++) {
+                    var queryString = "<a href='/coordinatordetails?studyid="+dataSet.result[i]["studyid"]+"'>"
+                    var surveyDetails = queryString+"<input type='button' value='View Details'>";
+                    var study=[dataSet.result[i]['name'],dataSet.result[i]['description'],dataSet.result[i]['email'],surveyDetails];
+                    studies.push(study);
+                  }
+                  $('#table-study').DataTable( {
+                    data: studies,
+                    columns: [
+                    { title: "Name" },
+                    { title: "Description" },
+                    { title: "Created By" },
+                    { title: "" }
+                  ]
+                });
+               },
+               type: 'POST'
+            });
+    });
+
+    $( document ).ready(function() {
+      var userid=getUrlParameter('userid');
+      console.log( "ready!" );
+      $.ajax({
+             url: '/cosurveylist',
+             data: {
+                format:'json',
+                userid:userid
+             },
+             error: function() {
+                $('body').html('<p>An error has occurred</p>');
+             },
+             dataType: 'json',
+             success: function(dataSet) {
+                console.log(dataSet);
+                var surveys = [];
+                for (var i = 0; i < dataSet.result.length; i++) {
+                  var queryString = "<a href='/addQuestion?surveyid="+dataSet.result[i]["surveyid"]+"'>"
+                  var addQuestion = queryString+"<input type='button' value='Add Question'>";
+                  var survey=[dataSet.result[i]['name'],dataSet.result[i]['description'],dataSet.result[i]['email'],addQuestion];
+                  surveys.push(survey);
+                }
+                $('#table-survey').DataTable( {
+                  data: surveys,
+                  columns: [
+                  { title: "Name" },
+                  { title: "Description" },
+                  { title: "Created By" },
+                  { title: "" }
+                ]
+              });
+             },
+             type: 'post'
+          });
+    });
+
+    $( document ).ready(function() {
+      console.log( "ready!" );
+      $.ajax({
+             url: '/comessagelist',
+             data: {
+                userid:getUrlParameter('userid')
+             },
+             error: function() {
+                $('body').html('<p>An error has occurred</p>');
+             },
+             dataType: 'json',
+             success: function(dataSet) {
+                console.log(dataSet);
+                var messages = [];
+                for (var i = 0; i < dataSet.result.length; i++) {
+                  var message=[dataSet.result[i]['name'],dataSet.result[i]['description'],dataSet.result[i]['type'],dataSet.result[i]['email']];
+                  messages.push(message);
+                }
+                $('#table-message').DataTable( {
+                  data: messages,
+                  columns: [
+                  { title: "Name" },
+                  { title: "Description" },
+                  { title: "Type" },
+                  { title: "Created By" },
+                ]
+              });
+             },
+             type: 'post'
+          });
+    });
+
+    </script>
+
+  </head>
+
+  <body>
+    <div class="table-container">
+      <h1 align="center" style="color:white;">Studies</h1>
+      <table id="table-study" class="table table-striped table-bordered table-responsive"></table>
+      <div class="inner cover">
+         <form method="GET" action="/addStudy">
+           <div class="col-xs-4">
+              <button type="submit" class="btn btn-primary btn-sx" type="button">Create New Study</button>
+          </div>
+         </form>
+     </div>
+    </div>
+
+    <div class="table-container">
+      <h1 align="center" style="color:white;">Surveys</h1>
+      <table id="table-survey" class="table table-striped table-bordered table-responsive"></table>
+      <div class="inner cover">
+         <form method="GET" action="/addSurvey">
+           <div class="col-xs-4">
+              <button type="submit" class="btn btn-primary btn-sx" type="button">Create New Survey</button>
+          </div>
+         </form>
+     </div>
+    </div>
+
+    <div class="table-container">
+      <h1 align="center" style="color:white;">Messages</h1>
+      <table id="table-message" class="table table-striped table-bordered table-responsive"></table>
+      <div class="inner cover">
+         <form method="GET" action="/addMessage">
+           <div class="col-xs-4">
+              <button type="submit" class="btn btn-primary btn-sx" type="button">Create New Message</button>
+          </div>
+         </form>
+     </div>
+    </div>
+
+  </body>
+</html>

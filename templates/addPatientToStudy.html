@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Add Patient to Study</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <script type="text/javascript" src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <style type="text/css">
+      .table-container
+      {
+        margin-top: 5%;
+      }
+      body, html{
+           height: 100%;
+       	background-repeat: no-repeat;
+       	background:url(https://i.ytimg.com/vi/4kfXjatgeEU/maxresdefault.jpg);
+       	font-family: 'Oxygen', sans-serif;
+      	    background-size: cover;
+      }
+
+    </style>
+    <script type="text/javascript">
+    toastr.options = {
+      "closeButton": false,
+      "debug": false,
+      "newestOnTop": false,
+      "progressBar": false,
+      "positionClass": "toast-top-right",
+      "preventDuplicates": false,
+      "onclick": null,
+      "showDuration": "300",
+      "hideDuration": "1000",
+      "timeOut": "5000",
+      "extendedTimeOut": "1000",
+      "showEasing": "swing",
+      "hideEasing": "linear",
+      "showMethod": "fadeIn",
+      "hideMethod": "fadeOut"
+    }
+
+    function addPatient(patientid)
+    {
+        studyid=getUrlParameter('studyid');
+        $.ajax({
+               url: '/addNewPatientToStudy',
+               data: {
+                  format:'json',
+                  studyid:studyid,
+                  patientid:patientid
+               },
+               error: function(errorCode) {
+                  $('body').html('<p>An error has occurred</p>');
+               },
+               dataType: 'json',
+               success: function(data) {
+                console.log(data);
+                if(data.status=="error")
+                 {
+                   toastr.error('There was error adding patient. Please try again or contact admin');
+                 }
+                 else
+                 {
+                    toastr.success("Patient is added");
+                    setTimeout(function(){
+                      location.reload();}, 3000);
+                 }
+               },
+               type: 'POST'
+            });
+    }
+    var getUrlParameter = function getUrlParameter(sParam) {
+     var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+         sURLVariables = sPageURL.split('&'),
+         sParameterName,
+         i;
+
+     for (i = 0; i < sURLVariables.length; i++) {
+         sParameterName = sURLVariables[i].split('=');
+         if (sParameterName[0] === sParam) {
+             return sParameterName[1] === undefined ? true : sParameterName[1];
+             }
+           }
+        };
+
+      $( document ).ready(function() {
+        var studyid = getUrlParameter("studyid");
+        $.ajax({
+               url: '/getAllPatientNotInStudy',
+               data: {
+                  format:'json',
+                  studyid:studyid
+               },
+               error: function(errorCode) {
+                  $('body').html('<p>An error has occurred</p>');
+               },
+               dataType: 'json',
+               success: function(dataSet) {
+                  var patients = [];
+                  for (var i = 0; i < dataSet.result.length; i++) {
+                    var patientDetails = "<input type='button' value='Add' onclick='addPatient("+dataSet.result[i]['patientid']+")'>";
+                    var patient=[dataSet.result[i]['email'],dataSet.result[i]['name'],dataSet.result[i]['age'],dataSet.result[i]['gender'],patientDetails];
+                    patients.push(patient);
+                  }
+                  $('#table-patient').DataTable( {
+                    data: patients,
+                    columns: [
+                    { title: "Email" },
+                    { title: "Name" },
+                    { title: "Age" },
+                    { title: "Gender" },
+                    {title: ""}
+                  ]
+                });
+               },
+               type: 'POST'
+            });
+    });
+    </script>
+
+  </head>
+
+  <body>
+    <div class="table-container">
+      <h1 align="center" style="color:white;">Patients</h1>
+      <table id="table-patient" class="table table-striped table-bordered table-responsive"></table>
+    </div>
+
+  </body>
+</html>

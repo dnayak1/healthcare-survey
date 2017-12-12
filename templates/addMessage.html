@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+		<!-- Website CSS style -->
+		<link href="../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+		<!-- Website Font style -->
+	    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+		<link rel="stylesheet" href="../style/style.css">
+		<!-- Google Fonts -->
+		<link href='https://fonts.googleapis.com/css?family=Passion+One' rel='stylesheet' type='text/css'>
+		<link href='https://fonts.googleapis.com/css?family=Oxygen' rel='stylesheet' type='text/css'>
+
+		<title>New Message</title>
+      <script type="text/javascript">
+        function showfield(name){
+          if(name=='Slider')document.getElementById('selectedType').innerHTML='Other: <input type="text" name="other" />';
+          else document.getElementById('div1').innerHTML='';
+        }
+        </script>
+	</head>
+	<body>
+		<div class="container">
+			<div class="row main">
+				<div class="main-login main-center">
+				<h5>Please enter all details to create new message</h5>
+					<form class="" method="post" action="/addNewMessage">
+
+            <div class="form-group">
+							<label for="name" class="cols-sm-2 control-label">Name</label>
+							<div class="cols-sm-10">
+								<div class="input-group">
+									<span class="input-group-addon"><i class="fa fa-graduation-cap" aria-hidden="true"></i></span>
+									<input type="text" class="form-control" name="name" id="name"  placeholder="Enter Name" required/>
+								</div>
+							</div>
+						</div>
+
+            <div class="form-group">
+							<label for="name" class="cols-sm-2 control-label">Description</label>
+							<div class="cols-sm-10">
+								<div class="input-group">
+									<span class="input-group-addon"><i class="fa fa-file-text" aria-hidden="true"></i></span>
+									<input type="text" class="form-control" name="description" id="description"  placeholder="Enter Description" required/>
+								</div>
+							</div>
+						</div>
+            <div class="form-group">
+							<label for="gender" class="cols-sm-2 control-label">Type</label>
+							<div class="cols-sm-10">
+								<div class="input-group">
+									<span class="input-group-addon"><i class="fa fa-street-view" aria-hidden="true"></i></span>
+                    <select name="type" id="type" class="form-control">
+                      <option value="Informational">Informational <i class="fa fa-caret-down" aria-hidden="true"></i></option>
+                      <option value="Reminder">Reminder</option>
+                      <option value="Yes/No">Yes/No</option>
+                    </select>
+								</div>
+							</div>
+						</div>
+
+						<div class="form-group ">
+              <button type="submit" class="btn btn-primary btn-lg btn-block login-button">Add</button>
+            </div>
+
+					</form>
+				</div>
+			</div>
+		</div>
+
+		 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+	</body>
+</html>

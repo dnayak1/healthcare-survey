@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+		<!-- Website CSS style -->
+		<link href="../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+		<!-- Website Font style -->
+	    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+		<link rel="stylesheet" href="../style/style.css">
+		<!-- Google Fonts -->
+		<link href='https://fonts.googleapis.com/css?family=Passion+One' rel='stylesheet' type='text/css'>
+		<link href='https://fonts.googleapis.com/css?family=Oxygen' rel='stylesheet' type='text/css'>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+    <link href="../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+		<title>New Question</title>
+    <script type="text/javascript" src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+      <script type="text/javascript">
+      toastr.options = {
+        "closeButton": false,
+        "debug": false,
+        "newestOnTop": false,
+        "progressBar": false,
+        "positionClass": "toast-top-right",
+        "preventDuplicates": false,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+      }
+        function showfield(name){
+          if(name=='Slider')document.getElementById('selectedType').innerHTML='Other: <input type="text" name="other" />';
+          else document.getElementById('div1').innerHTML='';
+        }
+
+        function changetypetextbox()
+        {
+            if (document.getElementById("type").value === "likert") {
+              document.getElementById("likertscale").removeAttribute('disabled');
+              document.getElementById("rule").setAttribute('disabled',true);
+            }else if (document.getElementById("type").value === "multiple") {
+              document.getElementById("likertscale").setAttribute('disabled',true);
+              document.getElementById("rule").removeAttribute('disabled');
+            }
+            else{
+                document.getElementById("likertscale").setAttribute('disabled',true);
+                document.getElementById("rule").setAttribute('disabled',true);
+            }
+        }
+
+        var getUrlParameter = function getUrlParameter(sParam) {
+         var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+             sURLVariables = sPageURL.split('&'),
+             sParameterName,
+             i;
+
+         for (i = 0; i < sURLVariables.length; i++) {
+             sParameterName = sURLVariables[i].split('=');
+             if (sParameterName[0] === sParam) {
+                 return sParameterName[1] === undefined ? true : sParameterName[1];
+                 }
+               }
+            };
+
+          $(document).ready(function() {
+            var surveyid = getUrlParameter("surveyid");
+            document.getElementById("surveyid").value = surveyid;
+          });
+
+          function addQuestion()
+          {
+              var surveyid = getUrlParameter("surveyid");
+              var question = document.getElementById("question").value;
+              var type = document.getElementById("type").value;
+              var likertscale = document.getElementById("likertscale").value;
+              $.ajax({
+                     url: '/addNewQuestionToStudy',
+                     data: {
+                        format:'json',
+                        surveyid:surveyid,
+                        type:type,
+                        question:question,
+                        likertscale:likertscale
+                     },
+                     error: function(errorCode) {
+                        $('body').html('<p>An error has occurred</p>');
+                     },
+                     dataType: 'json',
+                     success: function(data) {
+                      console.log(data);
+                      if(data.status=="error")
+                       {
+                         toastr.error('There was error adding patient. Please try again or contact admin');
+                       }
+                       else
+                       {
+                          toastr.success("Question is added");
+                          setTimeout(function(){
+                            location.reload();}, 3000);
+                       }
+                     },
+                     type: 'POST'
+                  });
+          }
+
+
+
+        // function changeruletextbox()
+        // {
+        //     if (document.getElementById("rule").value === "Yes") {
+        //         document.getElementById("ruleStronglyAgree").removeAttribute('disabled');
+        //         document.getElementById("ruleAgree").removeAttribute('disabled');
+        //         document.getElementById("ruleNotSure").removeAttribute('disabled');
+        //         document.getElementById("ruleDisagree").removeAttribute('disabled');
+        //         document.getElementById("ruleStronglyDisagree").removeAttribute('disabled');
+        //     }else{
+        //         document.getElementById("ruleStronglyAgree").setAttribute('disabled',true);
+        //         document.getElementById("ruleAgree").setAttribute('disabled',true);
+        //         document.getElementById("ruleNotSure").setAttribute('disabled',true);
+        //         document.getElementById("ruleDisagree").setAttribute('disabled',true);
+        //         document.getElementById("ruleStronglyDisagree").setAttribute('disabled',true);
+        //     }
+        // }
+
+        </script>
+	</head>
+	<body>
+		<div class="container">
+			<div class="row main">
+				<div class="main-login main-center">
+				<h5>Please enter all details to create new question</h5>
+					<!-- <form class="" method="post" action="/addNewQuestionToStudy"> -->
+
+            <div class="form-group">
+							<label for="Question" class="cols-sm-2 control-label">Question</label>
+							<div class="cols-sm-10">
+								<div class="input-group">
+									<span class="input-group-addon"><i class="fa fa-comment" aria-hidden="true"></i></span>
+									<input type="text" class="form-control" name="question" id="question"  placeholder="Enter Question" required/>
+								</div>
+							</div>
+						</div>
+
+            <div class="form-group">
+							<label for="gender" class="cols-sm-2 control-label">Type</label>
+							<div class="cols-sm-10">
+								<div class="input-group form-control">
+									<span class="input-group-addon"><i class="fa fa-street-view" aria-hidden="true"></i></span>
+                    <select name="type" id="type" class="form-control selectpicker" onChange="changetypetextbox();">
+                      <option value="text">Open Text<i class="fa fa-caret-down" aria-hidden="true"></i></option>
+                      <option value="likert">Likert</option>
+                      <option value="multiple">Multiple Choice</option>
+                    </select>
+								</div>
+							</div>
+						</div>
+
+            <div class="form-group">
+							<label for="Likert" class="cols-sm-2 control-label">Likert Scale</label>
+							<div class="cols-sm-10">
+								<div class="input-group">
+									<span class="input-group-addon"><i class="fa fa-balance-scale" aria-hidden="true"></i></span>
+									<input type="text" class="form-control" name="likertscale" id="likertscale"  placeholder="Enter scale" disabled/>
+								</div>
+							</div>
+						</div>
+            <input type="hidden" name="surveyid" id="surveyid" value="">
+
+
+            <!-- <div class="form-group">
+							<label for="rule" class="cols-sm-2 control-label">Apply Rule</label>
+							<div class="cols-sm-10">
+								<div class="input-group form-control">
+									<span class="input-group-addon"><i class="fa fa-street-view" aria-hidden="true"></i></span>
+                    <select name="rule" id="rule" class="form-control" onChange="changeruletextbox();" disabled>
+                      <option value="No">No <i class="fa fa-caret-down" aria-hidden="true"></i></option>
+                      <option value="Yes">Yes</option>
+                    </select>
+								</div>
+							</div>
+						</div> -->
+
+            <!-- <div class="form-group">
+							<label for="ruleChoice" class="cols-sm-2 control-label">Make Rule</label>
+							<div class="cols-sm-10">
+								<div>
+                    <input type="text" class="form-control" name="ruleStronglyAgree" id="ruleStronglyAgree"  placeholder="Rule for strongly agree" disabled/></br>
+                    <input type="text" class="form-control" name="ruleAgree" id="ruleAgree"  placeholder="Rule for agree" disabled/></br>
+                    <input type="text" class="form-control" name="ruleNotSure" id="ruleNotSure"  placeholder="Rule for not sure" disabled/></br>
+                    <input type="text" class="form-control" name="ruleDisagree" id="ruleDisagree"  placeholder="Rule for disagree" disabled/></br>
+                    <input type="text" class="form-control" name="ruleStronglyDisagree" id="ruleStronglyDisagree"  placeholder="Rule for strongly disagree" disabled/></br>
+								</div>
+							</div>
+						</div> -->
+
+						<div class="form-group ">
+              <button type="button" class="btn btn-primary btn-lg btn-block login-button" onclick="addQuestion()">Add</button>
+            </div>
+
+					</form>
+				</div>
+			</div>
+		</div>
+
+		 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+	</body>
+</html>
