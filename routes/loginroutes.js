@@ -33,7 +33,7 @@ exports.login = function(req,res){
 exports.coordinatorlist = function(req,res){
   role = req.session.role;
   if(role=='admin'){
-    connection.query("select userid,name,email from user where role='coordinator'", function (error, results, fields) {
+    connection.query("select userid,name,email from User where role='coordinator'", function (error, results, fields) {
       if (error) {
         res.redirect("/error");
       }else{

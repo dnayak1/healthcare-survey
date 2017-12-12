@@ -16,7 +16,7 @@ exports.messagenotification = function(req,res){
         res.redirect("/error");
       }else{
         question=results;
-        connection.query('select Patient.device from Patient inner join  Study_Patient on Study_Patient.patientid=Patient.patientid inner join  Study on Study_Patient.studyid=Study.studyid where Study.studyid=? and Patient.device is not null',[studyid], function (error, results, fields) {
+        connection.query('select Patient.device from Patient inner join Study_Patient on Study_Patient.patientid=Patient.patientid inner join  Study on Study_Patient.studyid=Study.studyid where Study.studyid=? and Patient.device is not null',[studyid], function (error, results, fields) {
         if (error) {
           message = "error occured";
           res.send({

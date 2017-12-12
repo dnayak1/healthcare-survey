@@ -25,7 +25,7 @@ exports.surveyAnswerList = function(req,res){
 exports.messageAnswerList = function(req,res){
   var patientid = req.body.patientid;
   console.log(patientid);
-    connection.query("select Message.name, Message.description,Message.type,Message_Answer.answer from Message inner join Message_Answer on Message.messageid=Message_Answer.messageid where patientid=?;",[patientid], function (error, results, fields) {
+    connection.query("select Message.name, Message.description,Message.type,Message_Answer.answer from Message inner join Message_Answer on Message.messageid=Message_Answer.messageid where Message_Answer.patientid=?;",[patientid], function (error, results, fields) {
       if (error) {
         res.redirect("/error");
       }else{

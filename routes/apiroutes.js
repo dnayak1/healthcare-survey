@@ -96,7 +96,7 @@ exports.logout = function(req,res){
   }
 };
 
-// exports.get = function(req,res){
+// exports.getSurveys = function(req,res){
 //   var token = req.body.token || req.query.token || req.headers['x-access-token'];
 //   var answer = req.body.answer;
 //   var id = req.body.messageid;
@@ -109,7 +109,7 @@ exports.logout = function(req,res){
 //           "message": message
 //         });
 //       }else{
-//         connection.query('UPDATE message SET answer = ? where id = ?',[answer,id], function (error, results, fields){
+//         connection.query('UPDATE Message SET answer = ? where id = ?',[answer,id], function (error, results, fields){
 //           if (error) {
 //             console.log("error ocurred",error.code);
 //             message = "Invalid data. Try again"

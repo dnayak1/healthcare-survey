@@ -15,7 +15,7 @@ exports.addNewCoordinator = function(req,res){
   var email = req.body.email;
   var password = req.body.password;
   var name = req.body.name;
-  connection.query("insert into user (email,password,role,name) values(?,?,'coordinator',?)",[email,password,name], function (error, results, fields){
+  connection.query("insert into User (email,password,role,name) values(?,?,'coordinator',?)",[email,password,name], function (error, results, fields){
     if (error) {
       res.redirect("/error");
     }else{

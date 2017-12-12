@@ -12,7 +12,7 @@ if(!err) {
 
 exports.costudylist = function(req,res){
   userid = req.body.userid || req.session.userid;
-    connection.query("select Study.studyid,Study.name,Study.description,User.email from Study inner join User on Study.userid=User.userid where user.userid=?",[userid], function (error, results, fields) {
+    connection.query("select Study.studyid,Study.name,Study.description,User.email from Study inner join User on Study.userid=User.userid where User.userid=?",[userid], function (error, results, fields) {
       if (error) {
         res.redirect("/error");
       }else{
@@ -24,7 +24,7 @@ exports.costudylist = function(req,res){
 };
 exports.cosurveylist = function(req,res){
   userid = req.body.userid || req.session.userid;
-    connection.query("select Survey.surveyid,Survey.name,Survey.description,User.email from Survey inner join User on Survey.userid=User.userid where user.userid=?",[userid], function (error, results, fields) {
+    connection.query("select Survey.surveyid,Survey.name,Survey.description,User.email from Survey inner join User on Survey.userid=User.userid where User.userid=?",[userid], function (error, results, fields) {
       if (error) {
         res.redirect("/error");
       }else{
@@ -36,7 +36,7 @@ exports.cosurveylist = function(req,res){
 };
 exports.comessagelist = function(req,res){
   userid = req.body.userid || req.session.userid;
-    connection.query("select Message.messageid,Message.name,Message.description,Message.type,User.email from Message inner join User on User.userid=Message.userid where user.userid=?",[userid], function (error, results, fields) {
+    connection.query("select Message.messageid,Message.name,Message.description,Message.type,User.email from Message inner join User on User.userid=Message.userid where User.userid=?",[userid], function (error, results, fields) {
       if (error) {
         res.redirect("/error");
       }else{
