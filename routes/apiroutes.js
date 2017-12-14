@@ -136,61 +136,119 @@ exports.getStudiesForPatient = function(req,res){
     });
   }
 };
-// exports.getmessages = function(req,res){
-//   var token = req.body.token || req.query.token || req.headers['x-access-token'];
-//   if(token){
-//     jwt.verify(token, 'superSecret', function(err, decoded) {
-//       if (err) {
-//         message="Failed to authenticate token."
-//         res.send({
-//           "code": "200",
-//           "message": message
-//         });
-//       }else{
-//         connection.query('Select * from message', function (error, results, fields){
-//           if (error) {
-//             console.log("error ocurred",error.code);
-//             message = "Invalid data. Try again"
-//             res.send({
-//               "code":400,
-//               "message":message
-//             })
-//           }else{
-//             message = "Success";
-//             res.send({
-//               "code":200,
-//               "result":results
-//                 });
-//           }
-//         });
-//       }
-//     });
-//   }else{
-//     message="Invalid token";
-//     res.send({
-//       "code":400,
-//       "message":message
-//     });
-//   }
-// };
+exports.getmessagesforpatient = function(req,res){
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  if(token){
+    jwt.verify(token, 'superSecret', function(err, decoded) {
+      if (err) {
+        message="Failed to authenticate token."
+        res.send({
+          "code": "200",
+          "message": message
+        });
+      }else{
+        var patientid = decoded.patientid;
+        connection.query('select * from Message where studyid in (Select studyid from Study_Patient where patientid=?)',[patientid], function (error, results, fields){
+          if (error) {
+            console.log("error ocurred",error.code);
+            message = "Unable to process the request"
+            res.send({
+              "code":400,
+              "message":message
+            })
+          }else{
+            message = "Success";
+            res.send({
+              "code":200,
+              "messages":results
+                });
+          }
+        });
+      }
+    });
+  }else{
+    message="Invalid token";
+    res.send({
+      "code":400,
+      "message":message
+    });
+  }
+};
 
+exports.getsurveysforpatient = function(req,res){
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  if(token){
+    jwt.verify(token, 'superSecret', function(err, decoded) {
+      if (err) {
+        message="Failed to authenticate token."
+        res.send({
+          "code": "200",
+          "message": message
+        });
+      }else{
+        var patientid = decoded.patientid;
+        connection.query('select * from Survey where surveyid in (select surveyid from Study_Survey where studyid in (Select studyid from Study_Patient where patientid=?))',[patientid], function (error, results, fields){
+          if (error) {
+            console.log("error ocurred",error.code);
+            message = "Unable to process the request"
+            res.send({
+              "code":400,
+              "message":message
+            })
+          }else{
+            message = "Success";
+            res.send({
+              "code":200,
+              "surveys":results
+                });
+          }
+        });
+      }
+    });
+  }else{
+    message="Invalid token";
+    res.send({
+      "code":400,
+      "message":message
+    });
+  }
+};
 
-// exports.device = function(req,res){
-//   var deviceToken = req.body.deviceToken;
-//   connection.query('INSERT INTO device values (?)',[deviceToken], function (error, results, fields){
-//     if (error) {
-//       console.log("error ocurred",error.code);
-//       message = "Invalid data. Try again"
-//       res.send({
-//           "code":400,
-//           "message":message
-//         })
-//     }else{
-//       message = "Device successfully registered";
-//       res.send({
-//         "code":200,
-//         "message":message,
-//           });
-//     }
-//   });
-// };
+exports.getsquestionsforsurvey = function(req,res){
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  var surveyid = req.body.surveyid;
+  if(token){
+    jwt.verify(token, 'superSecret', function(err, decoded) {
+      if (err) {
+        message="Failed to authenticate token."
+        res.send({
+          "code": "200",
+          "message": message
+        });
+      }else{
+        connection.query('select * from Question where surveyid=?',[surveyid], function (error, results, fields){
+          if (error) {
+            console.log("error ocurred",error.code);
+            message = "Unable to process the request"
+            res.send({
+              "code":400,
+              "message":message
+            })
+          }else{
+            message = "Success";
+            res.send({
+              "code":200,
+              "questions":results
+                });
+          }
+        });
+      }
+    });
+  }else{
+    message="Invalid token";
+    res.send({
+      "code":400,
+      "message":message
+    });
+  }
+};

@@ -110,4 +110,7 @@ app.post('/messageAnswerList',answer.messageAnswerList);
 
 app.post('/patientloginapi',api.login);
 app.post('/patientlogoutapi',api.logout);
- app.post('/getStudiesForPatientapi',api.getStudiesForPatient);
+app.post('/getStudiesForPatientapi',api.getStudiesForPatient);
+app.post('/getmessagesforpatientapi',api.getmessagesforpatient);
+app.post('/getsurveysforpatientapi',api.getsurveysforpatient);
+app.post('/getsquestionsforsurveyapi',api.getsquestionsforsurvey);
