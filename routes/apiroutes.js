@@ -18,7 +18,7 @@ exports.login = function(req,res){
     console.log(results);
     if(results.length > 0){
         var user = {
-          "id":results[0].patientid,
+          "patientid":results[0].patientid,
           "name":results[0].name,
           "email":results[0].email,
           "age":results[0].age,
@@ -96,45 +96,46 @@ exports.logout = function(req,res){
   }
 };
 
-// exports.getSurveys = function(req,res){
-//   var token = req.body.token || req.query.token || req.headers['x-access-token'];
-//   var answer = req.body.answer;
-//   var id = req.body.messageid;
-//   if(token){
-//     jwt.verify(token, 'superSecret', function(err, decoded) {
-//       if (err) {
-//         message="Failed to authenticate token."
-//         res.send({
-//           "code": "200",
-//           "message": message
-//         });
-//       }else{
-//         connection.query('UPDATE Message SET answer = ? where id = ?',[answer,id], function (error, results, fields){
-//           if (error) {
-//             console.log("error ocurred",error.code);
-//             message = "Invalid data. Try again"
-//             res.send({
-//               "code":400,
-//               "message":message
-//             })
-//           }else{
-//             message = "Successfully answered";
-//             res.send({
-//               "code":200,
-//               "message":message,
-//                 });
-//           }
-//         });
-//       }
-//     });
-//   }else{
-//     message="Invalid token";
-//     res.send({
-//       "code":400,
-//       "message":message
-//     });
-//   }
-// };
+exports.getStudiesForPatient = function(req,res){
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+
+  if(token){
+    jwt.verify(token, 'superSecret', function(err, decoded) {
+      if (err) {
+        message="Failed to authenticate token."
+        res.send({
+          "code": "200",
+          "message": message
+        });
+      }else{
+        var patientid = decoded.patientid;
+        console.log(decoded);
+        connection.query('select Study.name, Study.description, Study.studyid from Study inner join Study_Patient on Study_Patient.studyid=Study.studyid where Study_Patient.patientid=?',[patientid], function (error, results, fields){
+          if (error) {
+            console.log("error ocurred",error.code);
+            message = "Unable to process the request"
+            res.send({
+              "code":400,
+              "message":message
+            })
+          }else{
+            message = "Request successfully processed";
+            res.send({
+              "code":200,
+              "studies":results,
+                });
+          }
+        });
+      }
+    });
+  }else{
+    message="Invalid token";
+    res.send({
+      "code":400,
+      "message":message
+    });
+  }
+};
 // exports.getmessages = function(req,res){
 //   var token = req.body.token || req.query.token || req.headers['x-access-token'];
 //   if(token){
