@@ -271,9 +271,6 @@ exports.sendanswer = function(req,res){
           var questionid=answers[i].questionid;
           var patientid=answers[i].patientid;
           var answer=answers[i].answer;
-          console.log(questionid);
-          console.log(patientid);
-          console.log(answer);
           connection.query('insert into Question_Answer values(?,?,?)',[questionid,patientid,answer], function (error, results, fields){
           });
         }
@@ -281,6 +278,46 @@ exports.sendanswer = function(req,res){
           "code":200,
           "status":"answers submitted successfully"
           });
+      }
+    });
+  }else{
+    message="Invalid token";
+    res.send({
+      "code":400,
+      "message":message
+    });
+  }
+};
+exports.sendmessageanswer = function(req,res){
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  var messageid = req.body.messageid;
+  var answer = req.body.answer;
+  if(token){
+    jwt.verify(token, 'superSecret', function(err, decoded) {
+      if (err) {
+        message="Failed to authenticate token."
+        res.send({
+          "code": "200",
+          "message": message
+        });
+      }else{
+        var patientid = decoded.patientid;
+        connection.query('insert into Message_Answer values(?,?,?);',[messageid,patientid,answer], function (error, results, fields){
+          if (error) {
+            console.log("error ocurred",error.code);
+            message = "Unable to process the request"
+            res.send({
+              "code":400,
+              "message":message
+            })
+          }else{
+            message = "Success";
+            res.send({
+              "code":200,
+              "questions":"Answer submitted successfully"
+                });
+          }
+        });
       }
     });
   }else{
