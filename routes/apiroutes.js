@@ -328,3 +328,43 @@ exports.sendmessageanswer = function(req,res){
     });
   }
 };
+
+exports.withdrawfromstudy = function(req,res){
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  var studyid = req.body.studyid;
+  if(token){
+    jwt.verify(token, 'superSecret', function(err, decoded) {
+      if (err) {
+        message="Failed to authenticate token."
+        res.send({
+          "code": "200",
+          "message": message
+        });
+      }else{
+        var patientid = decoded.patientid;
+        connection.query('delete from Study_Patient where studyid=? && patientid=?',[studyid,patientid], function (error, results, fields){
+          if (error) {
+            console.log("error ocurred",error.code);
+            message = "Unable to process the request"
+            res.send({
+              "code":400,
+              "message":message
+            })
+          }else{
+            message = "Success";
+            res.send({
+              "code":200,
+              "questions":"Successfully withdrawn from study"
+                });
+          }
+        });
+      }
+    });
+  }else{
+    message="Invalid token";
+    res.send({
+      "code":400,
+      "message":message
+    });
+  }
+};
