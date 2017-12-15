@@ -114,3 +114,4 @@ app.post('/getStudiesForPatientapi',api.getStudiesForPatient);
 app.post('/getmessagesforpatientapi',api.getmessagesforpatient);
 app.post('/getsurveysforpatientapi',api.getsurveysforpatient);
 app.post('/getsquestionsforsurveyapi',api.getsquestionsforsurvey);
+app.post('/sendanswerapi',api.sendanswer);

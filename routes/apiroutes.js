@@ -138,6 +138,7 @@ exports.getStudiesForPatient = function(req,res){
 };
 exports.getmessagesforpatient = function(req,res){
   var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  var studyid=req.body.studyid;
   if(token){
     jwt.verify(token, 'superSecret', function(err, decoded) {
       if (err) {
@@ -147,8 +148,8 @@ exports.getmessagesforpatient = function(req,res){
           "message": message
         });
       }else{
-        var patientid = decoded.patientid;
-        connection.query('select * from Message where studyid in (Select studyid from Study_Patient where patientid=?)',[patientid], function (error, results, fields){
+        //var patientid = decoded.patientid;
+        connection.query('select * from Message where studyid=?',[studyid], function (error, results, fields){
           if (error) {
             console.log("error ocurred",error.code);
             message = "Unable to process the request"
@@ -177,6 +178,7 @@ exports.getmessagesforpatient = function(req,res){
 
 exports.getsurveysforpatient = function(req,res){
   var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  var studyid=req.body.studyid;
   if(token){
     jwt.verify(token, 'superSecret', function(err, decoded) {
       if (err) {
@@ -186,8 +188,8 @@ exports.getsurveysforpatient = function(req,res){
           "message": message
         });
       }else{
-        var patientid = decoded.patientid;
-        connection.query('select * from Survey where surveyid in (select surveyid from Study_Survey where studyid in (Select studyid from Study_Patient where patientid=?))',[patientid], function (error, results, fields){
+        // var patientid = decoded.patientid;
+        connection.query('select * from Survey where surveyid in (select surveyid from Study_Survey where studyid=?)',[studyid], function (error, results, fields){
           if (error) {
             console.log("error ocurred",error.code);
             message = "Unable to process the request"
@@ -242,6 +244,43 @@ exports.getsquestionsforsurvey = function(req,res){
                 });
           }
         });
+      }
+    });
+  }else{
+    message="Invalid token";
+    res.send({
+      "code":400,
+      "message":message
+    });
+  }
+};
+
+exports.sendanswer = function(req,res){
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  var answers = req.body.answers;
+  if(token){
+    jwt.verify(token, 'superSecret', function(err, decoded) {
+      if (err) {
+        message="Failed to authenticate token."
+        res.send({
+          "code": "200",
+          "message": message
+        });
+      }else{
+        for(var i=0;i<answers.length;i++){
+          var questionid=answers[i].questionid;
+          var patientid=answers[i].patientid;
+          var answer=answers[i].answer;
+          console.log(questionid);
+          console.log(patientid);
+          console.log(answer);
+          connection.query('insert into Question_Answer values(?,?,?)',[questionid,patientid,answer], function (error, results, fields){
+          });
+        }
+        res.send({
+          "code":200,
+          "status":"answers submitted successfully"
+          });
       }
     });
   }else{
