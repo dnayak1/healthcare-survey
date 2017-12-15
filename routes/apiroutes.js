@@ -258,6 +258,7 @@ exports.getsquestionsforsurvey = function(req,res){
 exports.sendanswer = function(req,res){
   var token = req.body.token || req.query.token || req.headers['x-access-token'];
   var answers = req.body.answers;
+  var verify;
   if(token){
     jwt.verify(token, 'superSecret', function(err, decoded) {
       if (err) {
@@ -355,6 +356,46 @@ exports.withdrawfromstudy = function(req,res){
             res.send({
               "code":200,
               "questions":"Successfully withdrawn from study"
+                });
+          }
+        });
+      }
+    });
+  }else{
+    message="Invalid token";
+    res.send({
+      "code":400,
+      "message":message
+    });
+  }
+};
+
+exports.updatedevicetoken = function(req,res){
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  var device = req.body.device;
+  if(token){
+    jwt.verify(token, 'superSecret', function(err, decoded) {
+      if (err) {
+        message="Failed to authenticate token."
+        res.send({
+          "code": "200",
+          "message": message
+        });
+      }else{
+        var patientid = decoded.patientid;
+        connection.query('update Patient set device=? where patientid=?',[device,patientid], function (error, results, fields){
+          if (error) {
+            console.log("error ocurred",error.code);
+            message = "Unable to process the request"
+            res.send({
+              "code":400,
+              "message":message
+            })
+          }else{
+            message = "Success";
+            res.send({
+              "code":200,
+              "questions":"device registered successfully"
                 });
           }
         });

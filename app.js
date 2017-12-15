@@ -117,3 +117,4 @@ app.post('/getsquestionsforsurveyapi',api.getsquestionsforsurvey);
 app.post('/sendanswerapi',api.sendanswer);
 app.post('/sendmessageanswerapi',api.sendmessageanswer);
 app.post('/withdrawfromstudyapi',api.withdrawfromstudy);
+app.post('/updatedevicetokenapi',api.updatedevicetoken);
